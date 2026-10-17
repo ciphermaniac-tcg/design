@@ -1,0 +1,227 @@
+/* ============================================================
+   Ciphermaniac design tokens, shared by ciphermaniac.com and
+   events.ciphermaniac.com. Light is the default; dark comes from
+   `body[data-mode="dark"]`, or from the system when no mode is pinned.
+   ============================================================ */
+
+:root,
+body[data-mode='light'] {
+  /* Neutrals: one cool grey. The page is a light grey, a box sits clearly
+     above it in white, and --border is the mid grey that holds 3:1 against the
+     page and both surfaces (WCAG 1.4.11), so it reads as a drawn edge. */
+  --bg: #ececea;
+  --surface: #ffffff;
+  --surface-2: #e3e4e1;
+  /* A text field's fill: set off from the page it sits on. */
+  --field: #ffffff;
+  --border: #7b8079;
+  --rule: #bfc3bc;
+  --fg: #20221f;
+  --muted: #50544f;
+  /* Every other row of a data table steps toward --surface-2, and the row
+     under the pointer takes one ink tint over either. Re-declared in each dark
+     block so they mix against the dark surfaces. */
+  --zebra: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
+  --row-hover: color-mix(in srgb, var(--fg) 12%, var(--surface));
+  /* A pressed segment sits raised off its track. */
+  --segment-on: var(--surface);
+
+  /* Marigold. #bb7700 is a fill and an edge: 3.15:1 on --bg clears the 3:1 a
+     border needs and misses the 4.5:1 text needs, so words take --accent-ink,
+     the same hue walked down until it clears 4.5:1 on every light ground. A
+     fill that carries text (a primary button, a pressed chip) takes the bright
+     --accent-fill, edged in --accent. */
+  --accent: #bb7700;
+  --accent-hover: #995500;
+  --accent-ink: #8c5900;
+  --accent-ink-hover: #734900;
+  --accent-fill: #eeaa11;
+  --accent-fill-hover: #ffbb33;
+  --accent-fg: #111100;
+
+  /* Status: Apple's green and red walked down until each clears 4.5:1 on
+     every light ground. A warning is dark amber text; true yellow can't be
+     read as words on a light page. */
+  --positive: #1b7332;
+  --negative: #c8000f;
+  --warning: #765800;
+
+  /* Badge tiers (Badges.tsx): bronze, silver, gold, then past gold. Each
+     holds 3:1 against --bg and --surface as a drawn graphic. */
+  --badge-tier-1: #9a5a2c;
+  --badge-tier-2: #67707a;
+  --badge-tier-3: #8a6a00;
+  --badge-tier-4: #6a4b9c;
+
+  /* Chart series: Apple's system colours at full strength. The light-mode
+     green, orange and teal fall under 3:1 on white, so charts also thicken
+     their lines and let the legend single a series out. */
+  --chart-1: #ff3b30;
+  --chart-2: #007aff;
+  --chart-3: #34c759;
+  --chart-4: #af52de;
+  --chart-5: #ff9500;
+  --chart-6: #30b0c7;
+  --chart-7: #ff2d55;
+  --chart-8: #a2845e;
+
+  /* Shape. sm = controls, md = panels; lg is reserved for printed card art
+     (it traces the real card's corner) and pill for count chips. */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --border-width: 1px;
+
+  /* Floating layers (menus, popovers, sheets, dialogs) cast this one shadow.
+     Nothing in the page flow casts any. */
+  --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.08), 0 10px 28px rgba(0, 0, 0, 0.14);
+
+  /* Type scale. Dense: data runs at 13px, captions and column heads at 11px,
+     prose at 15px. */
+  --text-3xs: 9px;
+  --text-2xs: 10.5px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-body: 15px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 30px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 18px;
+  --space-5: 28px;
+  --space-6: 44px;
+  --section-gap: 32px;
+
+  /* Density */
+  --row-height: 34px;
+  /* One height for the controls that share a row: search input, select, segmented switch. */
+  --control-h: 38px;
+
+  /* Motion: quick fades, nothing that moves position. */
+  --ms-fast: 130ms;
+  --ms-base: 180ms;
+  --ms-slow: 260ms;
+  --ease-base: cubic-bezier(0.2, 0, 0, 1);
+  /* Ease-out-quint: fast settle, no overshoot. */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --press-scale: 0.96;
+
+  /* Focus: a 2px outline in the text colour with a 2px gap, visible on every
+     surface and around a marigold button. Bordered fields draw it as an ink
+     border and a 1px ring instead. */
+  --focus-color: var(--fg);
+  --focus-width: 2px;
+  --focus-offset: 2px;
+  --focus-ring: 0 0 0 1px var(--fg);
+}
+
+body[data-mode='dark'] {
+  --bg: #161615;
+  --surface: #252523;
+  --surface-2: #33332f;
+  --field: #33332f;
+  --border: #8e8e88;
+  --rule: #59594f;
+  --fg: #f5f3eb;
+  --muted: #b9b6aa;
+  --zebra: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
+  --row-hover: color-mix(in srgb, var(--fg) 12%, var(--surface));
+  --segment-on: #45453f;
+  --accent: #eeaa11;
+  --accent-hover: #ffbb33;
+  --accent-ink: var(--accent);
+  --accent-ink-hover: var(--accent-hover);
+  --positive: #30d158;
+  --negative: #ff453a;
+  --warning: #ffd60a;
+  --badge-tier-1: #d0915f;
+  --badge-tier-2: #b4bcc3;
+  --badge-tier-3: #e2bb3c;
+  --badge-tier-4: #b49be0;
+  --chart-1: #ff453a;
+  --chart-2: #0a84ff;
+  --chart-3: #30d158;
+  --chart-4: #bf5af2;
+  --chart-5: #ff9f0a;
+  --chart-6: #40c8e0;
+  --chart-7: #ff375f;
+  --chart-8: #ac8e68;
+  --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Only auto-dark when the user hasn't pinned a mode */
+  body:not([data-mode]) {
+    --bg: #161615;
+    --surface: #252523;
+    --surface-2: #33332f;
+    --field: #33332f;
+    --border: #8e8e88;
+    --rule: #59594f;
+    --fg: #f5f3eb;
+    --muted: #b9b6aa;
+    --zebra: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
+    --row-hover: color-mix(in srgb, var(--fg) 12%, var(--surface));
+    --segment-on: #45453f;
+    --accent: #eeaa11;
+    --accent-hover: #ffbb33;
+    --accent-ink: var(--accent);
+    --accent-ink-hover: var(--accent-hover);
+    --positive: #30d158;
+    --negative: #ff453a;
+    --warning: #ffd60a;
+    --badge-tier-1: #d0915f;
+    --badge-tier-2: #b4bcc3;
+    --badge-tier-3: #e2bb3c;
+    --badge-tier-4: #b49be0;
+    --chart-1: #ff453a;
+    --chart-2: #0a84ff;
+    --chart-3: #30d158;
+    --chart-4: #bf5af2;
+    --chart-5: #ff9f0a;
+    --chart-6: #40c8e0;
+    --chart-7: #ff375f;
+    --chart-8: #ac8e68;
+    --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* The head bar is a cool near-black in both modes, so whatever sits in it
+   (the bar itself, its menus) takes these values whatever the body says. */
+.head-bar {
+  --bg: #1c1d1b;
+  --surface: #262725;
+  --surface-2: #30312e;
+  --field: #2c2d2a;
+  --border: #4a4c47;
+  --rule: #2a2b29;
+  --fg: #f1f1ee;
+  --muted: #b3b5b0;
+  --negative: #ff453a;
+  --accent: #eeaa11;
+  --accent-hover: #ffbb33;
+  --accent-ink: var(--accent);
+  --accent-ink-hover: var(--accent-hover);
+  --accent-fill: #eeaa11;
+  --accent-fill-hover: #ffbb33;
+  --focus-color: var(--fg);
+}
+
+/* On a dark page the bar steps up a shade and draws its edge, so it still
+   reads as a bar rather than melting into the page. */
+body[data-mode='dark'] .head-bar {
+  --bg: #232422;
+  --border: #4a4c48;
+}
+@media (prefers-color-scheme: dark) {
+  body:not([data-mode]) .head-bar {
+    --bg: #232422;
+    --border: #4a4c48;
+  }
+}

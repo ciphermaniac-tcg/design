@@ -322,6 +322,11 @@ table.data {
 .data tbody tr:hover {
   background: var(--row-hover);
 }
+/* Zebra rows need no rule between them, and a transparent one shows the
+   table through any cell that clips its overflow (a truncating name). */
+.data tbody td {
+  border-bottom: 0;
+}
 .data tbody tr.is-link .cardname:hover {
   color: var(--accent-ink);
 }

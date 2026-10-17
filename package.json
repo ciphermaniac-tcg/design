@@ -9,6 +9,10 @@
   "sideEffects": [
     "*.css"
   ],
+  "files": [
+    "src",
+    "LICENSE"
+  ],
   "exports": {
     "./tokens.css": "./src/styles/tokens.css",
     "./base.css": "./src/styles/base.css",

@@ -1,0 +1,53 @@
+{
+  "name": "@ciphermaniac/design",
+  "version": "0.1.0",
+  "description": "Tokens, base styles, primitives and shared Solid components for ciphermaniac.com and events.ciphermaniac.com",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "repository": "github:ciphermaniac-tcg/design",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./tokens.css": "./src/styles/tokens.css",
+    "./base.css": "./src/styles/base.css",
+    "./primitives.css": "./src/styles/primitives.css",
+    "./components/*": {
+      "types": "./src/components/*.tsx",
+      "solid": "./src/components/*.tsx",
+      "default": "./src/components/*.tsx"
+    },
+    "./lib/*": {
+      "types": "./src/lib/*.ts",
+      "default": "./src/lib/*.ts"
+    }
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0 --report-unused-disable-directives",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --import tsx tests/*.test.ts",
+    "knip": "knip",
+    "format:check": "prettier --check .",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run knip && npm test"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.9.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "^22.20.5",
+    "@typescript-eslint/eslint-plugin": "8.71.0",
+    "@typescript-eslint/parser": "8.71.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-solid": "^0.18.0",
+    "globals": "17.13.0",
+    "knip": "^6.39.0",
+    "prettier": "^3.9.9",
+    "solid-js": "^1.9.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.2"
+  }
+}

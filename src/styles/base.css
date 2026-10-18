@@ -94,6 +94,14 @@ a {
 a:hover {
   text-decoration: underline;
 }
+/* A link set inside running text carries an underline as well as the ink
+   colour: the two are under 3:1 apart, so colour alone doesn't mark it
+   (WCAG 1.4.1). */
+:where(p, dd, small, figcaption) a:not(.btn) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
 
 input,
 select,

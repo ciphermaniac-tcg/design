@@ -1,4 +1,4 @@
-import { createEffect, createSignal, type JSX, onCleanup } from 'solid-js';
+import { createEffect, createSignal, createUniqueId, type JSX, onCleanup } from 'solid-js';
 
 /**
  * Small inline tooltip trigger. Renders a marker (asterisk by default) that
@@ -11,12 +11,24 @@ import { createEffect, createSignal, type JSX, onCleanup } from 'solid-js';
  * position used to push half the bubble offscreen) and closes on outside
  * tap or Escape.
  *
+ * It is a toggle button: Enter, Space or a tap opens and closes it, and
+ * `aria-expanded` says which. Escape dismisses the bubble however it was
+ * shown, hover and keyboard focus included (WCAG 1.4.13); it comes back
+ * once the pointer leaves or focus moves on.
+ *
  * The `label` is exposed to assistive tech via `aria-label` so the note is
  * announced without needing to render the bubble visually.
  */
 export function InfoTip(props: { children: JSX.Element; label?: string; marker?: JSX.Element; class?: string }) {
   const [open, setOpen] = createSignal(false);
+  const [hovered, setHovered] = createSignal(false);
+  const [dismissed, setDismissed] = createSignal(false);
   const [shift, setShift] = createSignal(0);
+  const bubbleId = createUniqueId();
+  const dismiss = () => {
+    setOpen(false);
+    setDismissed(true);
+  };
   let root: HTMLSpanElement | undefined;
   let bubble: HTMLSpanElement | undefined;
 
@@ -44,33 +56,60 @@ export function InfoTip(props: { children: JSX.Element; label?: string; marker?:
         setOpen(false);
       }
     };
+    document.addEventListener('pointerdown', onDocPointer);
+    onCleanup(() => document.removeEventListener('pointerdown', onDocPointer));
+  });
+
+  // Escape reaches the bubble wherever it is showing from, focus or not.
+  createEffect(() => {
+    if (!open() && !hovered()) {
+      return;
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setOpen(false);
+        dismiss();
       }
     };
-    document.addEventListener('pointerdown', onDocPointer);
     document.addEventListener('keydown', onKey);
-    onCleanup(() => {
-      document.removeEventListener('pointerdown', onDocPointer);
-      document.removeEventListener('keydown', onKey);
-    });
+    onCleanup(() => document.removeEventListener('keydown', onKey));
   });
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setDismissed(false);
+      setOpen(!open());
+    } else if (e.key === 'Escape') {
+      dismiss();
+    }
+  };
 
   return (
     <span
       ref={root}
       class={props.class ? `info-tip ${props.class}` : 'info-tip'}
-      classList={{ open: open() }}
+      classList={{ open: open(), dismissed: dismissed() }}
       tabindex='0'
-      role='note'
+      role='button'
       aria-label={props.label}
-      onClick={() => setOpen(!open())}
+      aria-expanded={open() ? 'true' : 'false'}
+      aria-describedby={bubbleId}
+      onClick={() => {
+        setDismissed(false);
+        setOpen(!open());
+      }}
+      onKeyDown={onKeyDown}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => {
+        setHovered(false);
+        setDismissed(false);
+      }}
+      onFocusOut={() => setDismissed(false)}
     >
       <span class='info-tip-marker' aria-hidden='true'>
         {props.marker ?? '*'}
       </span>
-      <span ref={bubble} class='info-tip-bubble' role='tooltip' style={{ '--tip-shift': `${shift()}px` }}>
+      <span ref={bubble} id={bubbleId} class='info-tip-bubble' role='tooltip' style={{ '--tip-shift': `${shift()}px` }}>
         {props.children}
       </span>
     </span>

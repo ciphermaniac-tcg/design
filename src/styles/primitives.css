@@ -591,6 +591,12 @@ tr.row-expansion > td {
   transform: translateX(calc(-50% + var(--tip-shift, 0px))) translateY(0);
   pointer-events: auto;
 }
+/* Escape hides the bubble even while hover or focus would show it. */
+.info-tip.dismissed .info-tip-bubble {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 .info-tip-bubble p {
   margin: 0;
 }

@@ -153,6 +153,9 @@ body[data-mode='dark'] {
   --chart-7: #ff375f;
   --chart-8: #ac8e68;
   --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
+  /* Re-declared so they resolve against the dark --fg, not the light one. */
+  --focus-color: var(--fg);
+  --focus-ring: 0 0 0 1px var(--fg);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -189,6 +192,8 @@ body[data-mode='dark'] {
     --chart-7: #ff375f;
     --chart-8: #ac8e68;
     --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
+    --focus-color: var(--fg);
+    --focus-ring: 0 0 0 1px var(--fg);
   }
 }
 
@@ -210,7 +215,13 @@ body[data-mode='dark'] {
   --accent-ink-hover: var(--accent-hover);
   --accent-fill: #eeaa11;
   --accent-fill-hover: #ffbb33;
+  --positive: #30d158;
+  --warning: #ffd60a;
+  --zebra: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
+  --row-hover: color-mix(in srgb, var(--fg) 12%, var(--surface));
+  --segment-on: #3c3d3a;
   --focus-color: var(--fg);
+  --focus-ring: 0 0 0 1px var(--fg);
 }
 
 /* On a dark page the bar steps up a shade and draws its edge, so it still

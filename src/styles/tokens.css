@@ -40,8 +40,9 @@ body[data-mode='light'] {
   --accent-fg: #111100;
 
   /* Status: Apple's green and red walked down until each clears 4.5:1 on
-     every light ground. A warning is dark amber text; true yellow can't be
-     read as words on a light page. */
+     every light ground; in dark mode the green is Apple's own and the red is
+     lifted until it clears 4.5:1 on --surface-2. A warning is dark amber
+     text; true yellow can't be read as words on a light page. */
   --positive: #1b7332;
   --negative: #c8000f;
   --warning: #765800;
@@ -138,7 +139,7 @@ body[data-mode='dark'] {
   --accent-ink: var(--accent);
   --accent-ink-hover: var(--accent-hover);
   --positive: #30d158;
-  --negative: #ff453a;
+  --negative: #ff7a6e;
   --warning: #ffd60a;
   --badge-tier-1: #d0915f;
   --badge-tier-2: #b4bcc3;
@@ -177,7 +178,7 @@ body[data-mode='dark'] {
     --accent-ink: var(--accent);
     --accent-ink-hover: var(--accent-hover);
     --positive: #30d158;
-    --negative: #ff453a;
+    --negative: #ff7a6e;
     --warning: #ffd60a;
     --badge-tier-1: #d0915f;
     --badge-tier-2: #b4bcc3;
@@ -208,7 +209,7 @@ body[data-mode='dark'] {
   --rule: #2a2b29;
   --fg: #f1f1ee;
   --muted: #b3b5b0;
-  --negative: #ff453a;
+  --negative: #ff7a6e;
   --accent: #eeaa11;
   --accent-hover: #ffbb33;
   --accent-ink: var(--accent);

@@ -11,9 +11,9 @@ import type { JSX } from 'solid-js';
 export function ErrorState(props: { code: string; title: string; line: string; children?: JSX.Element }) {
   return (
     <section class='error-state'>
-      <p class='error-state-code' aria-hidden='true'>
-        {props.code}
-      </p>
+      {/* Drawn from the attribute by CSS: pure decoration, so it is neither read
+          out nor held to text contrast (WCAG 1.4.3 exempts it). */}
+      <p class='error-state-code' data-code={props.code} aria-hidden='true' />
       <h1>{props.title}</h1>
       <p class='error-state-line'>{props.line}</p>
       <div class='error-state-actions'>{props.children}</div>

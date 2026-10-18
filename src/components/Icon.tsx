@@ -39,6 +39,9 @@ const PATHS = {
 
 export type IconName = keyof typeof PATHS;
 
+/** Every icon in the set, in drawing order: for a specimen sheet or a picker. */
+export const ICON_NAMES = Object.keys(PATHS) as IconName[];
+
 interface IconProps {
   name: IconName;
   /** 16 beside data-size text, 20 beside headings and in bars. */

@@ -190,6 +190,9 @@ export function Combo<T>(props: ComboProps<T>): JSX.Element {
     }
   };
 
+  let blurTimer: ReturnType<typeof setTimeout> | undefined;
+  onCleanup(() => clearTimeout(blurTimer));
+
   const take = (index: number): void => {
     const item = results()[index];
     if (!item) {
@@ -222,7 +225,9 @@ export function Combo<T>(props: ComboProps<T>): JSX.Element {
         return;
       }
       setActive(i => (count ? (i + (event.key === 'ArrowDown' ? 1 : count - 1)) % count : 0));
-    } else if (event.key === 'Enter') {
+    } else if (event.key === 'Enter' && open() && count > 0) {
+      // Only an open list has a row to take; a closed box lets Enter through
+      // (to submit its form) rather than picking a row nobody can see.
       event.preventDefault();
       take(active());
     } else if (event.key === 'Escape') {
@@ -259,7 +264,9 @@ export function Combo<T>(props: ComboProps<T>): JSX.Element {
         }}
         onFocus={openList}
         // Delayed so a click on a result lands before the list unmounts.
-        onBlur={() => setTimeout(close, 150)}
+        onBlur={() => {
+          blurTimer = setTimeout(close, 150);
+        }}
         onKeyDown={onKeyDown}
       />
       <Show when={open()}>

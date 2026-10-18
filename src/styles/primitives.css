@@ -192,12 +192,10 @@
     padding: 0 8px;
   }
   /* A figure column is only ever as wide as its header, so on a phone the
-     header is what every other column is competing with: "EVENTS" is four
-     times the width of the 43 underneath it. One step down the scale, with the
-     caret tucked in, buys back most of a name. */
+     header is what every other column is competing with. Sentence case at the
+     11px caption size, with the caret tucked in, keeps it narrow. */
   .table-wrap .data thead th {
-    font-size: 9px;
-    letter-spacing: 0.04em;
+    font-size: 11px;
   }
   .table-wrap .data th.sortable button.th-sort {
     gap: 2px;
@@ -408,7 +406,7 @@ tr.row-expansion > td {
   color: var(--fg);
 }
 .segmented button.active {
-  background: var(--surface);
+  background: var(--segment-on);
   color: var(--fg);
   box-shadow: 0 0 0 1px var(--border);
 }
@@ -431,8 +429,9 @@ tr.row-expansion > td {
 .tabs button:hover {
   color: var(--fg);
 }
-/* A tab not open yet (Tabs.tsx LockedTab): dimmed, its bubble saying why. */
-.tab-locked {
+/* A tab not open yet (Tabs.tsx LockedTab): dimmed, its bubble saying why.
+   Doubled with .info-tip, which it also wears and which comes later. */
+.info-tip.tab-locked {
   padding: 0;
   margin: 0;
   cursor: default;
@@ -618,7 +617,8 @@ tr.row-expansion > td {
   input,
   select,
   textarea,
-  .search {
+  .search,
+  .tl-combo .search {
     font-size: 16px;
   }
 

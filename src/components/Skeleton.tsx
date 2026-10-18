@@ -9,8 +9,7 @@ interface SkeletonProps {
 }
 
 /**
- * Generic loading skeleton block. Inherits surface-2 color so it blends with the page.
- * Subtle pulse via keyframe (defined in components.css).
+ * Generic loading skeleton block, a still surface-2 fill that blends with the page.
  */
 export function Skeleton(props: SkeletonProps) {
   return (

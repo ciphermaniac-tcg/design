@@ -1,6 +1,6 @@
 {
   "name": "@ciphermaniac/design",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Tokens, base styles, primitives and shared Solid components for ciphermaniac.com and events.ciphermaniac.com",
   "license": "MIT",
   "private": true,

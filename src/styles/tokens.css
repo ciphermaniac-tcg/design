@@ -104,7 +104,8 @@ body[data-mode='light'] {
   /* One height for the controls that share a row: search input, select, segmented switch. */
   --control-h: 38px;
 
-  /* Motion: quick fades, nothing that moves position. */
+  /* Motion: quick fades, and one mark that travels to a choice (the tab
+     underline, the segmented pill) with a panel entering from its side. */
   --ms-fast: 130ms;
   --ms-base: 180ms;
   --ms-slow: 260ms;

@@ -1,4 +1,5 @@
-import { For, type JSX } from 'solid-js';
+import { createEffect, For, type JSX, onCleanup, onMount } from 'solid-js';
+import { placeMark } from '../lib/glide';
 import { rovingIndex } from '../lib/roving';
 
 interface SegmentedProps<T extends string> {
@@ -18,6 +19,24 @@ interface SegmentedProps<T extends string> {
  */
 export function Segmented<T extends string>(props: SegmentedProps<T>) {
   let group: HTMLDivElement | undefined;
+  let thumb: HTMLSpanElement | undefined;
+  const placeThumb = () => {
+    if (group && thumb) {
+      placeMark(group, thumb, group.querySelector<HTMLElement>('[role="radio"].active'));
+    }
+  };
+  createEffect(() => {
+    void props.selected;
+    queueMicrotask(placeThumb);
+  });
+  onMount(() => {
+    const ro = new ResizeObserver(placeThumb);
+    if (group) {
+      ro.observe(group);
+    }
+    void document.fonts?.ready.then(placeThumb);
+    onCleanup(() => ro.disconnect());
+  });
   // With nothing chosen, the first option takes focus so the group can be reached.
   const reachable = (value: T) =>
     props.options.some(opt => opt.value === props.selected)
@@ -38,7 +57,7 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
   return (
     <div
       ref={group}
-      class={props.class ? `segmented ${props.class}` : 'segmented'}
+      class={props.class ? `segmented has-thumb ${props.class}` : 'segmented has-thumb'}
       role='radiogroup'
       aria-label={props.ariaLabel}
       onKeyDown={key}
@@ -58,6 +77,7 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
           </button>
         )}
       </For>
+      <span ref={thumb} class='segmented-thumb' aria-hidden='true' />
     </div>
   );
 }

@@ -414,6 +414,43 @@ tr.row-expansion > td {
   box-shadow: 0 0 0 1px var(--border);
 }
 
+/* One pill that travels to the chosen segment (Segmented.tsx places it),
+   so a change of view reads as one thing moving, not two things blinking. */
+.segmented.has-thumb {
+  position: relative;
+}
+.segmented.has-thumb button {
+  position: relative;
+  z-index: 1;
+  transition:
+    color var(--ms-fast),
+    transform var(--ms-fast) var(--ease-spring);
+}
+.segmented.has-thumb button.active {
+  background: transparent;
+  box-shadow: none;
+}
+.segmented button:active {
+  transform: scale(0.97);
+}
+.segmented-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--mark-w);
+  height: var(--mark-h);
+  border-radius: calc(var(--radius-sm) - 3px);
+  background: var(--segment-on);
+  box-shadow: 0 0 0 1px var(--border);
+  transform: translate(var(--mark-x), var(--mark-y));
+  pointer-events: none;
+}
+.segmented-thumb.is-placed {
+  transition:
+    transform var(--ms-base) var(--ease-spring),
+    width var(--ms-base) var(--ease-spring);
+}
+
 /* ---------- Tabs (underline) ---------- */
 .tabs {
   display: flex;
@@ -457,6 +494,47 @@ tr.row-expansion > td {
   bottom: -1px;
   height: 2px;
   background: var(--fg);
+}
+/* One underline that travels to the open tab (Tabs.tsx places it). */
+.tabs.has-ink {
+  position: relative;
+}
+.tabs.has-ink button.active::after {
+  content: none;
+}
+.tabs button:active {
+  transform: scale(0.97);
+}
+.tabs button {
+  transition:
+    color var(--ms-fast),
+    transform var(--ms-fast) var(--ease-spring);
+}
+.tabs-ink {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: var(--mark-w);
+  height: 2px;
+  background: var(--fg);
+  transform: translateX(var(--mark-x));
+  pointer-events: none;
+}
+.tabs-ink.is-placed {
+  transition:
+    transform var(--ms-base) var(--ease-spring),
+    width var(--ms-base) var(--ease-spring);
+}
+/* Reduced motion: the marks jump and nothing scales under a press. */
+@media (prefers-reduced-motion: reduce) {
+  .segmented-thumb.is-placed,
+  .tabs-ink.is-placed {
+    transition: none;
+  }
+  .segmented button:active,
+  .tabs button:active {
+    transform: none;
+  }
 }
 @media (max-width: 640px) {
   .tabs {

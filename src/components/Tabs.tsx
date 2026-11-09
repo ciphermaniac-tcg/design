@@ -1,4 +1,5 @@
 import { createEffect, createMemo, createSignal, For, type JSX, onCleanup, onMount, Show } from 'solid-js';
+import { enterPanel, placeMark } from '../lib/glide';
 import { rovingIndex } from '../lib/roving';
 
 interface TabsProps<T extends string> {
@@ -31,8 +32,23 @@ function revealTab(nav: HTMLElement, tab: HTMLElement) {
 
 /** The content the selected tab shows, named by that tab. */
 export function TabPanel(props: { tabs: string; selected: string; children: JSX.Element }) {
+  let panel: HTMLDivElement | undefined;
+  let last = -1;
+  // The tab's place in its list, so the panel can enter from that side.
+  const place = (value: string) => {
+    const tab = document.getElementById(tabId(props.tabs, value));
+    const list = tab?.closest('[role="tablist"]');
+    return list && tab ? [...list.querySelectorAll('[role="tab"]')].indexOf(tab) : -1;
+  };
+  createEffect(() => {
+    const now = place(props.selected);
+    if (panel && last >= 0 && now >= 0) {
+      enterPanel(panel, Math.sign(now - last));
+    }
+    last = now;
+  });
   return (
-    <div role='tabpanel' id={panelId(props.tabs)} aria-labelledby={tabId(props.tabs, props.selected)}>
+    <div ref={panel} role='tabpanel' id={panelId(props.tabs)} aria-labelledby={tabId(props.tabs, props.selected)}>
       {props.children}
     </div>
   );
@@ -51,6 +67,13 @@ export function TabPanel(props: { tabs: string; selected: string; children: JSX.
  */
 export function Tabs<T extends string>(props: TabsProps<T>) {
   let nav: HTMLElement | undefined;
+  let ink: HTMLSpanElement | undefined;
+
+  const placeInk = () => {
+    if (nav && ink) {
+      placeMark(nav, ink, nav.querySelector<HTMLElement>('[role="tab"].active'));
+    }
+  };
 
   function updateFades() {
     if (!nav) {
@@ -64,10 +87,16 @@ export function Tabs<T extends string>(props: TabsProps<T>) {
   onMount(() => {
     updateFades();
     nav?.addEventListener('scroll', updateFades, { passive: true });
-    const ro = new ResizeObserver(updateFades);
+    // The strip and every tab: the open tab widens as it turns bold, and again once the face loads.
+    const ro = new ResizeObserver(() => {
+      updateFades();
+      placeInk();
+    });
     if (nav) {
       ro.observe(nav);
+      nav.querySelectorAll('[role="tab"]').forEach(tab => ro.observe(tab));
     }
+    void document.fonts?.ready.then(placeInk);
     onCleanup(() => {
       nav?.removeEventListener('scroll', updateFades);
       ro.disconnect();
@@ -96,10 +125,12 @@ export function Tabs<T extends string>(props: TabsProps<T>) {
     if (nav && active) {
       revealTab(nav, active);
     }
+    // After the class change lands, so the mark measures the open tab at its open weight.
+    queueMicrotask(placeInk);
   });
 
   return (
-    <nav ref={nav} class='tabs' role='tablist' aria-label={props.ariaLabel ?? 'Section'} onKeyDown={key}>
+    <nav ref={nav} class='tabs has-ink' role='tablist' aria-label={props.ariaLabel ?? 'Section'} onKeyDown={key}>
       <For each={props.options}>
         {opt => (
           <Show
@@ -128,6 +159,7 @@ export function Tabs<T extends string>(props: TabsProps<T>) {
           </Show>
         )}
       </For>
+      <span ref={ink} class='tabs-ink' aria-hidden='true' />
     </nav>
   );
 }

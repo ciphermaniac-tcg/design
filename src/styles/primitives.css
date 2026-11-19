@@ -186,23 +186,6 @@
   .table-wrap .data thead th {
     position: static;
   }
-  /* A sortable header's padding lives on its button, so the phone's tighter
-     gutter has to be set there too. It was still spending 28px a column on
-     desktop padding, and a header label is what sizes a numeric column: three
-     sortable columns took 84px of a 390px screen before a single figure was
-     drawn, and the players table paid for it out of the name. */
-  .table-wrap .data th.sortable button.th-sort {
-    padding: 0 8px;
-  }
-  /* A figure column is only ever as wide as its header, so on a phone the
-     header is what every other column is competing with. Sentence case at the
-     11px caption size, with the caret tucked in, keeps it narrow. */
-  .table-wrap .data thead th {
-    font-size: 11px;
-  }
-  .table-wrap .data th.sortable button.th-sort {
-    gap: 2px;
-  }
 }
 table.data {
   width: 100%;
@@ -229,10 +212,11 @@ table.data {
 /* Sticky in-table headers: rows scroll under the header, which parks directly
    beneath the sticky topnav. z-index sits above rows but below the topnav (50).
    The bottom hairline is a box-shadow — a border on a sticky cell can drop out
-   mid-scroll under border-collapse. */
+   mid-scroll under border-collapse. A page with its own sticky bar sets
+   `--sticky-offset` to the bar's height so the head parks under it. */
 .data thead th {
   position: sticky;
-  top: var(--topnav-h);
+  top: calc(var(--topnav-h) + var(--sticky-offset, 0px));
   z-index: 1;
   box-shadow: inset 0 -1px 0 var(--rule);
 }
@@ -245,17 +229,7 @@ table.data {
 .data th.sortable:hover {
   color: var(--accent-ink);
 }
-.data th .sort-mark {
-  display: inline-block;
-  margin-left: 4px;
-  font-size: 10.5px;
-  color: var(--accent-ink);
-}
-/* The inactive column's mark still occupies its slot; only the glyph goes. */
-.data th .sort-mark.is-idle {
-  visibility: hidden;
-}
-/* Shared base for the button-driven sortable headers other pages render as
+/* Shared base for the button-driven sortable headers SortTh renders as
    `<th class="sortable"><button class="th-sort">…</button></th>`. Strips native
    button chrome and inherits the th's typography so per-page styles stay thin;
    the ▲/▼ indicator is driven off the header's aria-sort state. */
@@ -279,30 +253,35 @@ table.data {
    so the cell's own `text-align: right` does not reach the label inside it, and
    every numeric header sat at the far side of its own column. */
 .data th.num.sortable button.th-sort {
+  position: relative;
   justify-content: flex-end;
 }
 /* The mark is reserved in every sortable header and only its glyph is hidden:
    `table-layout` is auto, so a mark that appears on click re-solves the column
-   widths and the table jumps sideways under the pointer.
-
-   Pages that reserve the mark in markup instead — a `.sort-mark` span, as the
-   card and archetype indexes render — opt out here, or the active column draws
-   both and reads "Inclusion ▼ ▼". */
-.data th.sortable button.th-sort:not(:has(.sort-mark))::after {
+   widths and the table jumps sideways under the pointer. In a figure column it
+   hangs in the gutter after the label, so the label's right edge is the
+   figures' right edge and the label reads first. */
+.data th.sortable button.th-sort::after {
+  /* The direction is on aria-sort; the mark is decoration, hidden from
+     assistive tech by the alt text. Engines without alt text (Safari before
+     17.4, Firefox before 128) drop that line and keep the plain mark. */
   content: '▼';
+  content: '▼' / '';
   font-size: 9px;
   color: var(--accent-ink);
   visibility: hidden;
 }
-.data th.sortable[aria-sort='ascending'] button.th-sort:not(:has(.sort-mark))::after {
+.data th.num.sortable button.th-sort::after {
+  position: absolute;
+  right: 3px;
+}
+.data th.sortable[aria-sort='ascending'] button.th-sort::after {
   content: '▲';
+  content: '▲' / '';
   visibility: visible;
 }
-.data th.sortable[aria-sort='descending'] button.th-sort:not(:has(.sort-mark))::after {
+.data th.sortable[aria-sort='descending'] button.th-sort::after {
   visibility: visible;
-}
-.data tbody tr:last-child td {
-  border-bottom: 0;
 }
 .data tbody tr {
   transition: background var(--ms-fast);
@@ -343,6 +322,86 @@ table.data {
 .data .muted-cell {
   color: var(--muted);
   font-size: 12px;
+}
+
+/* ---------- Column roles ----------
+   `.num` for figures, `.num.col-rank` for a row's place, `.col-name` for the
+   column that names the row and holds its link, `.col-secondary` for what a
+   phone can do without. */
+.data .col-rank {
+  width: 1%;
+  color: var(--muted);
+}
+.data td.col-rank {
+  font-size: 12px;
+}
+.data .col-name {
+  white-space: nowrap;
+}
+/* In a table with the roles no cell keeps the transparent rule: under a head
+   it shows the table through above a row header (`<th scope="row">`). */
+.data:where(:has(.col-name)) :is(th, td) {
+  border-bottom: 0;
+}
+/* A row header reads as data, not as a second head band. */
+.data tbody th {
+  font-size: 13px;
+  font-weight: 400;
+  background: none;
+}
+/* The name is the row's link: ink, the accent while the row is hovered, and
+   the package focus ring. The row's own click forwards to it. */
+.data .col-name a {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--fg);
+  text-decoration: none;
+}
+.data tbody tr.is-link:hover .col-name a {
+  color: var(--accent-ink);
+}
+/* An opened row, with its details in the `tr.row-expansion` under it. */
+.data tbody tr.is-open > * {
+  background: var(--surface-2);
+}
+@media (max-width: 640px) {
+  /* One phone shape for every table that uses the column roles: 6px gutters
+     (10px at the edges, the right edge being the last column a phone shows),
+     secondary columns gone, and the name taking what the figures leave and
+     truncating, so every figure stays on screen. A table without a
+     `.col-name` keeps its own gutters; `:where` keeps these at the
+     specificity a page's own rules expect. A sortable head's padding lives
+     on its button, so the gutter is set there too. `padding-inline` leaves
+     an expanded row's own vertical padding alone. */
+  .table-wrap .data:where(:has(.col-name)) td,
+  .table-wrap .data:where(:has(.col-name)) th:not(.sortable),
+  .table-wrap .data:where(:has(.col-name)) th.sortable button.th-sort {
+    padding-inline: 6px;
+  }
+  .table-wrap .data:where(:has(.col-name)) tr > :first-child:not(.sortable),
+  .table-wrap .data:where(:has(.col-name)) tr > :first-child button.th-sort {
+    padding-left: 10px;
+  }
+  .table-wrap .data:where(:has(.col-name)) tr > :nth-last-child(1 of :not(.col-secondary)):not(.sortable),
+  .table-wrap .data:where(:has(.col-name)) tr > :nth-last-child(1 of :not(.col-secondary)) button.th-sort {
+    padding-right: 10px;
+  }
+  .data .col-secondary {
+    display: none;
+  }
+  /* `max-width: 0` with `width: 100%` is what makes an auto-layout cell take
+     the slack and ellipsize instead of growing. */
+  .table-wrap .data .col-name {
+    width: 100%;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .data th.num.sortable button.th-sort::after {
+    right: 0;
+    font-size: 8px;
+  }
 }
 
 /* ---------- Expandable row (inline decklist on player profile) ---------- */

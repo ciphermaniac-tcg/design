@@ -1,0 +1,16 @@
+/* A head with a note (an InfoTip) sets it before the label: the gutter after
+   the label holds the sort mark. SortTh imports this sheet, so it loads with
+   the pages that sort rather than with every page. */
+.th-noted {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.table-wrap .data th.sortable .th-noted button.th-sort {
+  width: auto;
+  padding-left: 4px;
+}
+.th-noted .info-tip {
+  margin-left: 10px;
+}
